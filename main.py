@@ -21,7 +21,7 @@ def get_action_space_size() -> int:
 
         # Convert bitmap to list of bools, so the sum
         # is exactly the # possible moves from this square
-        action_space += sum(all_moves.tolist())
+        action_space += all_moves.mask.bit_count()
 
         b.remove_piece_at(square)
 
