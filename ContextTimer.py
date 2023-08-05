@@ -1,3 +1,5 @@
+# https://stackoverflow.com/a/69156219/7304977
+
 from time import perf_counter
 
 
