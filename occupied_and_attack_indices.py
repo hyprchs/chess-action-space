@@ -286,8 +286,6 @@ def decode_move(bits: bitarray.bitarray,
                                  mask_legal=mask_legal,
                                  mask_pseudo_legal=mask_pseudo_legal)
 
-    print(f'Decoded: {bits[:from_square_bit_len + to_square_bit_len]}')
-
     return chess.Move(from_square, to_square), from_square_bit_len + to_square_bit_len
 
 
@@ -300,12 +298,10 @@ def encode_moves(moves: List[chess.Move],
     encoded_moves = bitarray.bitarray()
     board = chess.Board(starting_fen)
     for move in moves:
-        encoded_move = encode_move(move,
-                                   board,
-                                   mask_legal=mask_legal,
-                                   mask_pseudo_legal=mask_pseudo_legal)
-        print(encoded_move)
-        encoded_moves += encoded_move
+        encoded_moves += encode_move(move,
+                                     board,
+                                     mask_legal=mask_legal,
+                                     mask_pseudo_legal=mask_pseudo_legal)
         board.push(move)
     return encoded_moves
 
@@ -358,18 +354,14 @@ if __name__ == '__main__':
     game = chess.pgn.read_game(io.StringIO(pgn))
 
     moves = list(game.mainline_moves())
-    print(moves)
     starting_fen = game.board().fen()
-
-    # board = chess.Board()
-    # move = chess.Move.from_uci('b1c3')
 
     results: Dict[Tuple[bool, bool], Tuple[float, int]] = {}
 
     for mask_legal, mask_pseudo_legal in ((False, False), (False, True), (True, True)):
         print(f'mask_legal: {mask_legal}, mask_pseudo_legal: {mask_pseudo_legal}')
         with ContextTimer(5) as t:
-            for _ in range(1):
+            for _ in range(1000):
                 encoded = encode_moves(moves,
                                        starting_fen,
                                        mask_legal=mask_legal,
@@ -380,19 +372,9 @@ if __name__ == '__main__':
                                        mask_pseudo_legal=mask_pseudo_legal,
                                        moves=moves)
 
-                # encoded = encode_move(move,
-                #                       board,
-                #                       mask_legal=mask_legal,
-                #                       mask_pseudo_legal=mask_pseudo_legal)
-                #
-                # decoded = decode_move(encoded,
-                #                       board,
-                #                       mask_legal=mask_legal,
-                #                       mask_pseudo_legal=mask_pseudo_legal)
-
-        print(encoded)
-        print(decoded)
-        print(moves == decoded)
+        print(f'Encoded: {encoded}')
+        print(f'Decoded: {decoded}')
+        print(f'Correct decoding: {moves == decoded}')
         print()
 
         results[(mask_legal, mask_pseudo_legal)] = t.time, len(encoded)
