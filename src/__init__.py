@@ -19,8 +19,8 @@ def get_possible_to_squares_mask(from_square: chess.Square) -> chess.Bitboard:
     b.set_piece_at(from_square, chess.Piece.from_symbol('N'))
     n_moves = b.attacks_mask(from_square)
 
-    # Done with the board now
     b.remove_piece_at(from_square)
+    # Done with the board now
 
     # Logical or to combine bitmaps (ex. 1100 | 0101 = 1101)
     all_moves = q_moves | n_moves
