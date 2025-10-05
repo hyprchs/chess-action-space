@@ -21,9 +21,6 @@ dev = [
 requires = ["uv_build"]
 build-backend = "uv_build"
 
-[tool.uv.build-backend]
-module-name = ["chess_action_space"]
-
 [tool.ruff.format]
 quote-style = "single"
 
