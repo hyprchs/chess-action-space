@@ -67,7 +67,7 @@ def test_can_be_pawn_promotion():
                 if sq is not None
             ]
         else:
-            assert False, 'Bad logic above'
+            raise AssertionError('Bad logic above')
 
         b.turn = pawn_color
         b.set_piece_at(from_square, chess.Piece(chess.PAWN, pawn_color))
