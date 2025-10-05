@@ -59,17 +59,17 @@ def get_action_space_size() -> int:
     # Each chess piece moves like either a queen or a knight from one square to another square.
     # All possible moves except pawn promotions can be specified by the "from" square and the "to" square
     # (even castling, ex. e1->g1, or e1->c1).
-    action_space = 0
+    action_space_size = 0
     for from_square in chess.SQUARES:
         # Get # possible moves from this square
         all_moves_mask = get_possible_to_squares_mask(from_square)
-        action_space += all_moves_mask.bit_count()
+        action_space_size += all_moves_mask.bit_count()
 
     # Count underpromotions.
     # Note that we choose to define the action that was already counted above as the "default" promotion to a queen.
-    action_space += get_underpromotion_action_space_size()
+    action_space_size += get_underpromotion_action_space_size()
 
-    return action_space
+    return action_space_size
 
 
 def iter_action_space() -> Iterable[chess.Move]:
