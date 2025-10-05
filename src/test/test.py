@@ -1,11 +1,12 @@
 from copy import copy
 
-from src import (
+import chess
+
+from chess_action_space import (
     get_action_space_size,
     get_underpromotion_action_space_size,
     iter_action_space,
 )
-import chess
 
 
 def test_get_action_space_size():
@@ -57,7 +58,8 @@ def test_can_be_pawn_promotion():
             pawn_color = chess.WHITE
             capturable_squares = [
                 next(iter(chess.SquareSet(chess.shift_up(chess.BB_SQUARES[sq]))))
-                for sq in adjacent_to_from_square if sq is not None
+                for sq in adjacent_to_from_square
+                if sq is not None
             ]
         elif from_rank == chess.RANK_NAMES.index('2'):
             pawn_color = chess.BLACK

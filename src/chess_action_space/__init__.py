@@ -1,11 +1,10 @@
 import os
+from collections.abc import Iterable
 from copy import copy
 from os import PathLike
-from typing import Iterable
+from pathlib import Path
 
 import chess
-
-from pathlib import Path
 
 
 def get_possible_to_squares_mask(from_square: chess.Square) -> chess.Bitboard:
@@ -95,4 +94,4 @@ def export(path: str | Path | PathLike, *, allow_overwrite: bool = False) -> Non
     if os.path.exists(path) and not allow_overwrite:
         raise FileExistsError(f'File {path} already exists')
     with open(path, 'w') as f:
-        f.write("".join(f"{m.uci()}\n" for m in iter_action_space()))
+        f.write(''.join(f'{m.uci()}\n' for m in iter_action_space()))
