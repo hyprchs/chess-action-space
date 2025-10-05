@@ -14,7 +14,7 @@ from chess_action_space.utils import (
 
 def get_action_space_size(fast: bool = True) -> int:
     """
-    Return the size of the action space, which is equal to `ACTION_SPACE`.
+    Return the number of moves in the minimal discrete action space in chess.
     Uses `fast=True` by default to use a pre-computed value.
     """
     if fast:
@@ -38,8 +38,9 @@ def get_action_space_size(fast: bool = True) -> int:
 
 def iter_action_space(fast: bool = True) -> Iterable[chess.Move]:
     """
-    Iterate over `chess.Move` objects in the action space. Queen promotions are not included since it can
-    coalesce to the regular non-pawn-promotion move. Uses `fast=True` by default to iterate over a pre-computed set.
+    Iterate over all moves in the minimal discrete action space in chess. Note that promotions to queens are not
+    differentiated from the same non-promotion move (only underpromotions are differentiated).
+    Uses `fast=True` by default to iterate over a pre-computed list.
     """
     if fast:
         yield from ACTION_SPACE
