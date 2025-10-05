@@ -1,0 +1,9 @@
+[project]
+name = "chess-action-space"
+version = "0.1.0"
+description = "Small lib for enumerating and iterating over moves in the minimal discrete action space in chess, which has size 1924."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "chess>=1.11.2",
+]
