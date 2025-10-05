@@ -39,7 +39,7 @@ def test_can_be_pawn_promotion():
             else:
                 assert 0 <= left_file <= 7
                 left_sq = chess.square(left_file, rank)
-            if right_file > chess.FILE_NAMES.index("h"):
+            if right_file > chess.FILE_NAMES.index('h'):
                 right_sq = None
             else:
                 assert 0 <= right_file <= 7
@@ -47,11 +47,11 @@ def test_can_be_pawn_promotion():
             return left_sq, right_sq
 
         b = chess.Board.empty()
-        b.set_piece_at(from_square, chess.Piece.from_symbol("P"))
+        b.set_piece_at(from_square, chess.Piece.from_symbol('P'))
         for sq in get_adjacent_squares(to_square):
             if sq is None:
                 continue
-            b.set_piece_at(sq, chess.Piece.from_symbol("q"))
+            b.set_piece_at(sq, chess.Piece.from_symbol('q'))
 
         return b.is_legal(chess.Move(from_square, to_square, chess.QUEEN))
 

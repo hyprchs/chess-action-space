@@ -12,11 +12,11 @@ def get_possible_to_squares_mask(from_square: chess.Square) -> chess.Bitboard:
     b = chess.BaseBoard.empty()
 
     # Place queen and see where it attacks
-    b.set_piece_at(from_square, chess.Piece.from_symbol("Q"))
+    b.set_piece_at(from_square, chess.Piece.from_symbol('Q'))
     q_moves = b.attacks_mask(from_square)
 
     # Place knight and see where it attacks
-    b.set_piece_at(from_square, chess.Piece.from_symbol("N"))
+    b.set_piece_at(from_square, chess.Piece.from_symbol('N'))
     n_moves = b.attacks_mask(from_square)
 
     # Done with the board now
@@ -93,6 +93,6 @@ def iter_action_space() -> Iterable[chess.Move]:
 
 def export(path: str | Path | PathLike, *, allow_overwrite: bool = False) -> None:
     if os.path.exists(path) and not allow_overwrite:
-        raise FileExistsError(f"File {path} already exists")
+        raise FileExistsError(f'File {path} already exists')
     with open(path, 'w') as f:
         f.writelines(m.uci() for m in iter_action_space())
