@@ -24,6 +24,10 @@ def test_can_be_pawn_promotion():
     def can_be_pawn_promotion_inefficient(
         from_square: chess.Square, to_square: chess.Square
     ) -> bool:
+        from_rank = chess.square_rank(from_square)
+        if from_rank not in (chess.RANK_NAMES.index('7'), chess.RANK_NAMES.index('2')):
+            return False
+
         def get_adjacent_squares(
             square: chess.Square,
         ) -> tuple[chess.Square | None, chess.Square | None]:
@@ -47,11 +51,30 @@ def test_can_be_pawn_promotion():
             return left_sq, right_sq
 
         b = chess.Board.empty()
-        b.set_piece_at(from_square, chess.Piece.from_symbol('P'))
-        for sq in get_adjacent_squares(to_square):
+
+        adjacent_to_from_square = get_adjacent_squares(from_square)
+        if from_rank == chess.RANK_NAMES.index('7'):
+            pawn_color = chess.WHITE
+            capturable_squares = [
+                next(iter(chess.SquareSet(chess.shift_up(chess.BB_SQUARES[sq]))))
+                for sq in adjacent_to_from_square if sq is not None
+            ]
+        elif from_rank == chess.RANK_NAMES.index('2'):
+            pawn_color = chess.BLACK
+            capturable_squares = [
+                next(iter(chess.SquareSet(chess.shift_down(chess.BB_SQUARES[sq]))))
+                for sq in adjacent_to_from_square
+                if sq is not None
+            ]
+        else:
+            assert False, 'Bad logic above'
+
+        b.turn = pawn_color
+        b.set_piece_at(from_square, chess.Piece(chess.PAWN, pawn_color))
+        for sq in capturable_squares:
             if sq is None:
                 continue
-            b.set_piece_at(sq, chess.Piece.from_symbol('q'))
+            b.set_piece_at(sq, chess.Piece(chess.QUEEN, not pawn_color))
 
         return b.is_legal(chess.Move(from_square, to_square, chess.QUEEN))
 
@@ -63,17 +86,20 @@ def test_can_be_pawn_promotion():
             assert move_copy in action_space_moves
             # Will check via the non-promotion version of the move
             continue
+        move_knight_promo = copy(move)
+        move_bishop_promo = copy(move)
+        move_rook_promo = copy(move)
+        move_knight_promo.promotion = chess.KNIGHT
+        move_bishop_promo.promotion = chess.BISHOP
+        move_rook_promo.promotion = chess.ROOK
         if can_be_pawn_promotion_inefficient(move.from_square, move.to_square):
-            move_knight_promo = copy(move)
-            move_bishop_promo = copy(move)
-            move_rook_promo = copy(move)
-            move_knight_promo.promotion = chess.KNIGHT
-            move_bishop_promo.promotion = chess.BISHOP
-            move_rook_promo.promotion = chess.ROOK
-            assert all(
-                m in action_space_moves
-                for m in (move_knight_promo, move_bishop_promo, move_rook_promo)
-            )
+            assert move_knight_promo in action_space_moves
+            assert move_bishop_promo in action_space_moves
+            assert move_rook_promo in action_space_moves
+        else:
+            assert move_knight_promo not in action_space_moves
+            assert move_bishop_promo not in action_space_moves
+            assert move_rook_promo not in action_space_moves
 
 
 def test_no_queen_promotions():
