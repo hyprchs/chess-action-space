@@ -95,4 +95,4 @@ def export(path: str | Path | PathLike, *, allow_overwrite: bool = False) -> Non
     if os.path.exists(path) and not allow_overwrite:
         raise FileExistsError(f'File {path} already exists')
     with open(path, 'w') as f:
-        f.writelines(m.uci() for m in iter_action_space())
+        f.write("".join(f"{m.uci()}\n" for m in iter_action_space()))
