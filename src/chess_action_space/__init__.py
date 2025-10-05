@@ -1,0 +1,102 @@
+from collections.abc import Iterable
+from copy import copy
+from pathlib import Path
+
+import chess
+
+from chess_action_space.explicit import ACTION_SPACE, ACTION_SPACE_SIZE
+from chess_action_space.utils import (
+    can_be_pawn_promotion,
+    get_possible_to_squares_mask,
+    get_underpromotion_action_space_size,
+)
+
+
+def get_action_space_size(fast: bool = True) -> int:
+    """
+    Return the number of moves in the minimal discrete action space in chess.
+    Uses `fast=True` by default to use a pre-computed value.
+    """
+    if fast:
+        return ACTION_SPACE_SIZE
+
+    # Each chess piece moves like either a queen or a knight from one square to another square.
+    # All possible moves except pawn promotions can be specified by the "from" square and the "to" square
+    # (even castling, ex. e1->g1, or e1->c1).
+    action_space_size = 0
+    for from_square in chess.SQUARES:
+        # Get # possible moves from this square
+        all_moves_mask = get_possible_to_squares_mask(from_square)
+        action_space_size += all_moves_mask.bit_count()
+
+    # Count underpromotions.
+    # Note that we choose to define the action that was already counted above as the "default" promotion to a queen.
+    action_space_size += get_underpromotion_action_space_size()
+
+    return action_space_size
+
+
+def iter_action_space(fast: bool = True) -> Iterable[chess.Move]:
+    """
+    Iterate over all moves in the minimal discrete action space in chess. Note that promotions to queens are not
+    differentiated from the same non-promotion move (only underpromotions are differentiated).
+    Uses `fast=True` by default to iterate over a pre-computed list.
+    """
+    if fast:
+        yield from ACTION_SPACE
+        return
+
+    non_queen_promotion_piece_types = (chess.KNIGHT, chess.BISHOP, chess.ROOK)
+    for from_square in chess.SQUARES:
+        # Get # possible moves from this square
+        all_moves_mask = get_possible_to_squares_mask(from_square)
+        for to_square in chess.SquareSet(all_moves_mask):
+            move = chess.Move(from_square, to_square)
+            yield move
+
+            # Yield underpromotion moves
+            if not can_be_pawn_promotion(from_square, to_square):
+                continue
+            for piece_type in non_queen_promotion_piece_types:
+                promotion_move = copy(move)
+                promotion_move.promotion = piece_type
+                yield promotion_move
+
+
+def _gen_explicit_py() -> None:
+    """Refresh the file `explicit.py`."""
+
+    explicit_py_path = Path(__file__).parent / 'explicit.py'
+
+    s = '"""\nThis file is generated, do not modify it directly!\n"""'
+
+    s += '\n\nimport chess'
+
+    action_space_size = get_action_space_size(fast=False)
+    s += f'\n\nACTION_SPACE_SIZE = {action_space_size}'
+    s += '\n"""The number of moves in the minimal discrete action space in chess."""'
+
+    s += '\n\nACTION_SPACE = ('
+    for move in iter_action_space(fast=False):
+        s += f"\n    chess.Move.from_uci('{move.uci()}'),"
+    s += '\n)'
+    s += f'\n"""All {action_space_size} moves in the minimal discrete action space in chess."""'
+
+    s += '\n'
+
+    with open(explicit_py_path, 'w') as f:
+        f.write(s)
+
+    print(f'Wrote to "{explicit_py_path}"!')
+
+
+if __name__ == '__main__':
+    _gen_explicit_py()
+
+
+__all__ = [
+    'ACTION_SPACE_SIZE',
+    'ACTION_SPACE',
+    'get_action_space_size',
+    'iter_action_space',
+]

@@ -2,6 +2,7 @@
 name = "chess-action-space"
 version = "0.1.0"
 description = "Small lib for enumerating and iterating over moves in the minimal discrete action space in chess, which has size 1924."
+classifiers = ["Private :: Do Not Upload"]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -10,9 +11,21 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "mypy>=1.18.2",
+    "pre-commit>=4.3.0",
     "pytest>=8.4.2",
     "ruff>=0.13.3",
 ]
 
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
 [tool.ruff.format]
 quote-style = "single"
+
+[tool.ruff.lint]
+extend-select = [
+    "I",   # enable import sorting checks
+    "UP",  # flags `List[...]`, `Dict[..., ...]`, etc and prefers primitives `list[...]`, `dict[..., ...]`, etc.
+]
