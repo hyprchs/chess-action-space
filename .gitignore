@@ -1,3 +1,5 @@
 .idea/
 .venv/
 __pycache__/
+.dmypy.json
+.mypy_cache/

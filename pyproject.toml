@@ -30,3 +30,9 @@ extend-select = [
     "I", # enable import sorting checks
     "UP", # flags `List[...]`, `Dict[..., ...]`, etc and prefers primitives `list[...]`, `dict[..., ...]`, etc.
 ]
+
+[tool.mypy]
+python-version = "3.13"
+strict = false
+incremental = true
+cache_dir = ".mypy_cache"
