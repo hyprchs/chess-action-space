@@ -32,7 +32,7 @@ extend-select = [
 ]
 
 [tool.mypy]
-python-version = "3.13"
+python_version = "3.13"
 strict = false
 incremental = true
 cache_dir = ".mypy_cache"
